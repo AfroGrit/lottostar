@@ -59,7 +59,6 @@ class LotteryNational(Lottery):
     Details for a National lottery e.g. Germany only
     country
     date
-    tickets and jackpot
     """
 
     def __init__(self, tickets, results):
@@ -102,12 +101,16 @@ class Jackpot(Lottery):
 
 
 def main(args):
+
+    # Prompt user which Lottery he/she would like to inspect
+    # Use option above for subsequent queries
+
+    # Sandbox
     foo = LotteryNational('germany_03-11-2019_32322-1.csv', 'germany_03-11-2019_32322 result-1.csv')
     print(foo)
 
 
 if __name__ == "__main__":
-    """ This is executed when run from the command line """
     parser = argparse.ArgumentParser()
 
     # Required positional argument
