@@ -11,35 +11,40 @@ import argparse
 import csv
 import re
 
+
 class Files():
     """
     Base class for file handling
     """
+
     def __init__(self):
-        print ('Opening files')
+        print('Opening files')
+
 
 class OpenFiles(Files):
     """
     Elaborate to aggregate csv files
     """
 
-    def dict_csv(fname):
+    def dict_csv(self, fname):
         with open(fname) as f:
-            #next(f)
+            # next(f)
             reader = csv.DictReader(f, delimiter=';')
             # Row = [Ticket_id, Mainballs, Sub1, Sub2]
             for line in reader:
-                print (line["mainballs"])
-                #print (line)
+                # print (line["mainballs"])
+                print(line)
 
 
 class Lottery:
     """
     Base class for lottery work
     """
+
     def __init__(self):
         pass
-        #print ('Lottery created')
+        # print ('Lottery created')
+
 
 class LotteryNational(Lottery):
     """
@@ -51,22 +56,22 @@ class LotteryNational(Lottery):
 
     def __init__(self, tickets, results):
         Lottery.__init__(self)
-        #print(' Lottery National created')
+        # print(' Lottery National created')
         self.country = re.search('(.+?)_', results).group(1).upper()
         self.date = re.search("([0-9]{2}\-[0-9]{2}\-[0-9]{4})", results).group(1)
-        #self.date = extractdate #ddmmyyyy
+        # self.date = extractdate #ddmmyyyy
         self.tickets = tickets
         self.results = results
 
     def __str__(self):
-        print ('\nLottery details')
-        print ('+++++++++++++++\n')
+        print('\nLottery details')
+        print('+++++++++++++++\n')
         return f"{self.country} Lottery, Draw on {self.date}.\nLoaded file: {self.tickets} & {self.results}\n"
 
     def __len__(self):
         # Get the number of tickets played from files
         with open(self.tickets) as f:
-            #next(f)
+            # next(f)
             ticket = 0
             reader = csv.DictReader(f, delimiter=';')
             for line in reader:
@@ -78,14 +83,13 @@ class LotteryNational(Lottery):
         ticketsplayed = OpenFiles.dict_csv(self.tickets)
         return "{resultplayed}"
 
-def main(args):
 
+def main(args):
     foo = LotteryNational('germany_03-11-2019_32322-1.csv', 'germany_03-11-2019_32322 result-1.csv')
     print(foo)
     views = foo.view()
 
     print('/n')
-
 
 
 if __name__ == "__main__":
