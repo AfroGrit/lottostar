@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Module Docstring
-"""
+""" Module Docstring """
 
 __author__ = "Luke Kitunka"
 __version__ = "0.1.0"
@@ -13,18 +11,14 @@ import re
 
 
 class Files():
-    """
-    Base class for file handling
-    """
+    """ Base class | file handler """
 
     def __init__(self):
         print('Opening files')
 
 
 class OpenFiles(Files):
-    """
-    Elaborate to aggregate csv files
-    """
+    """ Elaborate to aggregate csv file """
 
     def dict_csv(self, fname):
         with open(fname) as f:
@@ -37,17 +31,14 @@ class OpenFiles(Files):
 
         # Return the appropriate data
 
+
 class Report(Files):
-    """
-    Write report
-    """
+    """  Report formatting and writer """
     pass
 
 
 class Lottery:
-    """
-    Base class for lottery work
-    """
+    """ Base class | lottery handler """
 
     def __init__(self):
         pass
@@ -55,11 +46,7 @@ class Lottery:
 
 
 class LotteryNational(Lottery):
-    """
-    Details for a National lottery e.g. Germany only
-    country
-    date
-    """
+    """ Details for a National lottery e.g. Germany only | country | date """
 
     def __init__(self, tickets, results):
         Lottery.__init__(self)
@@ -90,10 +77,9 @@ class LotteryNational(Lottery):
         ticketsplayed = OpenFiles.dict_csv(self.tickets)
         return "{resultplayed}"
 
+
 class Jackpot(Lottery):
-    """
-    Jackpot Calculus
-    """
+    """ Jackpot Calculus """
 
     def __init__(self, tickets, results):
         Lottery.__init__(self)
