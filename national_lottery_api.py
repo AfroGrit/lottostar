@@ -35,6 +35,14 @@ class OpenFiles(Files):
                 # print (line["mainballs"])
                 print(line)
 
+        # Return the appropriate data
+
+class Report(Files):
+    """
+    Write report
+    """
+    pass
+
 
 class Lottery:
     """
@@ -83,13 +91,19 @@ class LotteryNational(Lottery):
         ticketsplayed = OpenFiles.dict_csv(self.tickets)
         return "{resultplayed}"
 
+class Jackpot(Lottery):
+    """
+    Jackpot Calculus
+    """
+
+    def __init__(self, tickets, results):
+        Lottery.__init__(self)
+        pass
+
 
 def main(args):
     foo = LotteryNational('germany_03-11-2019_32322-1.csv', 'germany_03-11-2019_32322 result-1.csv')
     print(foo)
-    views = foo.view()
-
-    print('/n')
 
 
 if __name__ == "__main__":
