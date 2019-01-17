@@ -92,7 +92,7 @@ def main(args):
     # Use option above for subsequent queries
 
     # Sandbox
-    foo = LotteryNational('germany_03-11-2019_32322-1.csv', 'germany_03-11-2019_32322 result-1.csv')
+    foo = LotteryNational('files/germany_03-11-2019_32322-1.csv', 'files/germany_03-11-2019_32322 result-1.csv')
     print(foo)
 
 
