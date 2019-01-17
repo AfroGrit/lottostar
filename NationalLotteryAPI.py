@@ -78,21 +78,13 @@ class LotteryNational(Lottery):
         ticketsplayed = OpenFiles.dict_csv(self.tickets)
         return "{resultplayed}"
 
-
-def create_dicts(l):
-    pass
-    #return dict([(k,v) for k,v in zip (l[::2], l[1::2])])
-
 def main(args):
-    """ Main entry point of the app """
-    #print("hello world")
-    #print(args)
 
     foo = LotteryNational('germany_03-11-2019_32322-1.csv', 'germany_03-11-2019_32322 result-1.csv')
     print(foo)
     views = foo.view()
 
-    print('/n/n')
+    print('/n')
 
 
 
