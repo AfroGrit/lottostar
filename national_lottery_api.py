@@ -8,61 +8,104 @@ __license__ = "All Rights Reserved"
 import argparse
 import csv
 import re
-
-
-class Files():
-    """ Base class | file handler """
-
-    def __init__(self):
-        print('Opening files')
-
-
-class OpenFiles(Files):
-    """ Elaborate to aggregate csv file """
-
-    def dict_csv(self, fname):
-        with open(fname) as f:
-            # next(f)
-            reader = csv.DictReader(f, delimiter=';')
-            # Row = [Ticket_id, Mainballs, Sub1, Sub2]
-            for line in reader:
-                # print (line["mainballs"])
-                print(line)
-
-        # Return the appropriate data
-
-
-class Report(Files):
-    """  Report formatting and writer """
-    pass
+import logging
 
 
 class Lottery:
     """ Base class | lottery handler """
 
-    def __init__(self):
-        pass
-        # print ('Lottery created')
+    def __init__(self, tickets, results):
+        self.tickets = tickets
+        self.results = results
+
+    def credentials(self):
+        raise NotImplementedError("check the subclasses")
+
+    def tuplecsv(self):
+        raise NotImplementedError("check the subclasses")
+
+    def jackpot(self):
+        raise NotImplementedError("check the subclasses")
 
 
 class LotteryNational(Lottery):
     """ Details for a National lottery e.g. Germany only | country | date """
 
-    def __init__(self, tickets, results):
-        Lottery.__init__(self)
-        # print(' Lottery National created')
-        self.country = re.search('(.+?)_', results).group(1).upper()
-        self.date = re.search("([0-9]{2}\-[0-9]{2}\-[0-9]{4})", results).group(1)
-        # self.date = extractdate #ddmmyyyy
-        self.tickets = tickets
-        self.results = results
+    def credentials(self):
+        """ Use file name to extract the country """
+        country = re.search('(.+?)_', self.results).group(1).upper()
+        date = re.search("([0-9]{2}\-[0-9]{2}\-[0-9]{4})", self.results).group(1)
+
+    def view(self):
+        """ Summarise and display """
+        print('Glimpse into the lotto')
+        print(23 * '-')
+
+        # tickets = list(map(int, ['ticket_id']))
+        # print("Extracted ticket IDs: ", tickets)
+        # print("Extracted main balls: ", data['mainballs'])  # Convert to a list of tuples for comparissons
+        # print("Extracted SUB1 IDs: ", list(map(int, data['sub1'])))
+        # # print ("\nExtracted SUB2 IDs are: ", list(map(int, data['sub2'])))
+
+    def tuplecsv(self, tickets):
+        """ bring in csv file and convert to tuples """
+        logger.info("class that converts csv data into a list of tuples")
+
+        try:
+            def fitem(item):
+                item = item.strip()
+                try:
+                    item = int(item)
+                except ValueError:
+                    pass
+                return item
+
+            with open(tickets) as csvin:
+                reader = csv.DictReader(csvin, delimiter=';')
+                data = {k.strip(): [fitem(v)] for k, v in next(reader).items()}
+                for line in reader:
+                    for k, v in line.items():
+                        k = k.strip()
+                        data[k].append(fitem(v))
+                return data
+        except FileNotFoundError:
+            data = None
+
+    """  Report formatting and writer """
+
+    def header(self):
+        print('Writing header.')
+        print(23 * '+')
+        # Print header with details of the report
+        # Date of lotto
+        # Date of request
+
+    def resultsfile(self):
+        print('Writing results to file.')
+        print(23 * '+')
+        # for every country
+        # call the computed results
+        # write to results file
+        # append to other results
+
+    #         with open("results.txt", 'w') as r:
+    #             for r in self.files:
+    #                 print(r, file = r)
+    # pass
+
+    def jackpot(self):
+        """ Compare ticket IDs and resuls and return results """
+        print('\nWinner and NotWinners')
+        print(23 * '=')
 
     def __str__(self):
+        """ Summary from input data """
         print('\nLottery details')
-        print('+++++++++++++++\n')
+        print(23 * '+')
         return f"{self.country} Lottery, Draw on {self.date}.\nLoaded file: {self.tickets} & {self.results}\n"
 
     def __len__(self):
+        """ Return the numer of tickets enterered for a lottery"""
         # Get the number of tickets played from files
         with open(self.tickets) as f:
             # next(f)
@@ -72,29 +115,30 @@ class LotteryNational(Lottery):
                 ticket += 1
         return ticket
 
-    def view(self):
-        resultplayed = OpenFiles.dict_csv(self.results)
-        ticketsplayed = OpenFiles.dict_csv(self.tickets)
-        return "{resultplayed}"
-
-
-class Jackpot(Lottery):
-    """ Jackpot Calculus """
-
-    def __init__(self, tickets, results):
-        Lottery.__init__(self)
-        pass
-
 
 def main(args):
-
     # Prompt user which Lottery he/she would like to inspect
     # Use option above for subsequent queries
 
     # Sandbox
-    foo = LotteryNational('files/germany_03-11-2019_32322-1.csv', 'files/germany_03-11-2019_32322 result-1.csv')
-    print(foo)
+    foobar = LotteryNational(tickets='files/germany_03-11-2019_32322-1_mod.csv',
+                             results='files/germany_03-11-2019_32322 result-1_mod.csv')
+    # print(foobar)
 
+    foobar.credentials()
+    foobar.view()
+    foobar.jackpot()
+    foobar.header()
+    foobar.resultsfile()
+
+
+# Configure logs
+# LOG_FORMAT = "%(levelname)s %(asctime)s - %(message)s"
+# logging.basicConfig(file='files/logs/lottostat.log',
+#                     level=logging.DEBUG,
+#                     format=LOG_FORMAT,
+#                     filemode='w')
+# logger = logging.getLogger()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
