@@ -9,6 +9,8 @@ import argparse
 import csv
 import re
 import logging
+import os, os.path
+import errno
 
 
 class Lottery:
@@ -42,7 +44,7 @@ class LotteryNational(Lottery):
         print('Summary lotto')
         print(23 * '=')
 
-        tickets = tuple(map(int, data['ticket_id']))
+        self.tickets = tuple(map(int, self.data['ticket_id']))
 
         # Function that converts ['1,4,5,30,45', ...] into [(,4,5,30,45), ...]
         def listcleaner(thing):
@@ -52,14 +54,13 @@ class LotteryNational(Lottery):
                 b = tuple(map(int, a))
                 c.append(b)
             return c
-        balls = listcleaner(data['mainballs'])
 
-        SUB1 = tuple(map(int, data['sub1']))
+        # SUB1 = tuple(map(int, data['sub1']))
 
         # Use tuples for memory management.
-        print("Extracted ticket IDs: ", tickets)
-        print("Extracted main balls: ", balls)  # Convert to a list of tuples for comparissons
-        print("Extracted SUB1 IDs: ", SUB1)
+        print("Extracted ticket IDs: ", data['ticket_id'])
+        print("Extracted main balls: ", listcleaner(data['mainballs']))  # Convert to a list of tuples for comparissons
+        print("Extracted SUB1 IDs: ", data['sub1'])
         # print ("\nExtracted SUB2 IDs are: ", list(map(int, data['sub2'])))
 
     def tuplecsv(self, tickets):
@@ -95,14 +96,31 @@ class LotteryNational(Lottery):
     def resultsfile(self):
         print('\nWriting results to file.')
         print(23 * '=')
+
         # for every country
         # call the computed results
         # write to results file
         # append to other results
 
-    #         with open("results.txt", 'w') as r:
-    #             for r in self.files:
-    #                 print(r, file = r)
+        # Taken from https://stackoverflow.com/a/600612/119527
+        def mkdir_p(path):
+            try:
+                os.makedirs(path)
+            except OSError as exc:  # Python >2.5
+                if exc.errno == errno.EEXIST and os.path.isdir(path):
+                    pass
+                else:
+                    raise
+
+        def safe_open_w(path):
+            ''' Open "path" for writing, creating any parent directories as needed.
+            '''
+            mkdir_p(os.path.dirname(path))
+            return open(path, 'w')
+
+        with safe_open_w('results/output-text.txt') as f:
+            f.write("line %d\r\n")
+
     # pass
 
     def jackpot(self):
@@ -135,15 +153,16 @@ def main(args):
     # Sandbox
     foobar = LotteryNational(tickets='files/germany_03-11-2019_32322-1_mod.csv',
                              results='files/germany_03-11-2019_32322 result-1_mod.csv')
+    #print(foobar)
 
     foobar.credentials()
-    foobar.view()
+    # foobar.view()
     foobar.jackpot()
     foobar.resultsfile()
 
 
 # Configure logs
-# LOG_FORMAT = {"%(levelname)s %(asctime)s - %(message)s"}
+# LOG_FORMAT = "%(levelname)s %(asctime)s - %(message)s"
 # logging.basicConfig(file='files/logs/lottostat.log',
 #                     level=logging.DEBUG,
 #                     format=LOG_FORMAT,
