@@ -15,6 +15,7 @@ class Lottery:
     """ Base class | lottery handler """
 
     def __init__(self, tickets, results):
+        # print ('Lotter created')
         self.tickets = tickets
         self.results = results
 
@@ -38,14 +39,28 @@ class LotteryNational(Lottery):
 
     def view(self):
         """ Summarise and display """
-        print('Glimpse into the lotto')
-        print(23 * '-')
+        print('Summary lotto')
+        print(23 * '=')
 
-        # tickets = list(map(int, ['ticket_id']))
-        # print("Extracted ticket IDs: ", tickets)
-        # print("Extracted main balls: ", data['mainballs'])  # Convert to a list of tuples for comparissons
-        # print("Extracted SUB1 IDs: ", list(map(int, data['sub1'])))
-        # # print ("\nExtracted SUB2 IDs are: ", list(map(int, data['sub2'])))
+        tickets = tuple(map(int, data['ticket_id']))
+
+        # Function that converts ['1,4,5,30,45', ...] into [(,4,5,30,45), ...]
+        def listcleaner(thing):
+            c = []
+            for i in thing:
+                a = i.split(",")
+                b = tuple(map(int, a))
+                c.append(b)
+            return c
+        balls = listcleaner(data['mainballs'])
+
+        SUB1 = tuple(map(int, data['sub1']))
+
+        # Use tuples for memory management.
+        print("Extracted ticket IDs: ", tickets)
+        print("Extracted main balls: ", balls)  # Convert to a list of tuples for comparissons
+        print("Extracted SUB1 IDs: ", SUB1)
+        # print ("\nExtracted SUB2 IDs are: ", list(map(int, data['sub2'])))
 
     def tuplecsv(self, tickets):
         """ bring in csv file and convert to tuples """
@@ -60,29 +75,26 @@ class LotteryNational(Lottery):
                     pass
                 return item
 
-            with open(tickets) as csvin:
-                reader = csv.DictReader(csvin, delimiter=';')
+            # Read both files
+            with open(tickets) as ticketsin, open(results) as resultsin:
+                reader = csv.DictReader(ticketsin, delimiter=';')
+                reader2 = csv.DictReader(resultsin, delimiter=';')
+
                 data = {k.strip(): [fitem(v)] for k, v in next(reader).items()}
                 for line in reader:
                     for k, v in line.items():
                         k = k.strip()
                         data[k].append(fitem(v))
                 return data
+
         except FileNotFoundError:
             data = None
 
     """  Report formatting and writer """
 
-    def header(self):
-        print('Writing header.')
-        print(23 * '+')
-        # Print header with details of the report
-        # Date of lotto
-        # Date of request
-
     def resultsfile(self):
-        print('Writing results to file.')
-        print(23 * '+')
+        print('\nWriting results to file.')
+        print(23 * '=')
         # for every country
         # call the computed results
         # write to results file
@@ -95,7 +107,7 @@ class LotteryNational(Lottery):
 
     def jackpot(self):
         """ Compare ticket IDs and resuls and return results """
-        print('\nWinner and NotWinners')
+        print('\nWinner and NoneWinners')
         print(23 * '=')
 
     def __str__(self):
@@ -123,17 +135,15 @@ def main(args):
     # Sandbox
     foobar = LotteryNational(tickets='files/germany_03-11-2019_32322-1_mod.csv',
                              results='files/germany_03-11-2019_32322 result-1_mod.csv')
-    # print(foobar)
 
     foobar.credentials()
     foobar.view()
     foobar.jackpot()
-    foobar.header()
     foobar.resultsfile()
 
 
 # Configure logs
-# LOG_FORMAT = "%(levelname)s %(asctime)s - %(message)s"
+# LOG_FORMAT = {"%(levelname)s %(asctime)s - %(message)s"}
 # logging.basicConfig(file='files/logs/lottostat.log',
 #                     level=logging.DEBUG,
 #                     format=LOG_FORMAT,
